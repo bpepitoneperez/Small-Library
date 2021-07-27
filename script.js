@@ -1,4 +1,25 @@
+let storage = true;
 let myLibrary = [];
+let hasArray;
+
+const table = document.getElementById('display');
+
+if (storageAvailable('localStorage')) {
+    storage = true;
+    if(!localStorage.getItem('library')) {
+    } 
+    else {
+        let retrieved = localStorage.getItem('library');
+        retrieved = JSON.parse(retrieved);
+        myLibrary = [...retrieved];
+        if (myLibrary.length != 0) {
+            displayBooks();
+        }
+    }
+}
+else {
+    storage = false;
+}
 
 const body = document.body;
 
@@ -34,7 +55,7 @@ addButton.addEventListener('click', function() {
     pageLabel.textContent = 'Pages';
     form.appendChild(pageLabel);
     let pageInput = document.createElement('input');
-    pageInput.type = 'text';
+    pageInput.type = 'number';
     pageInput.id = 'pages';
     pageInput.name = 'pages';
     pageInput.required = true;;
@@ -73,11 +94,8 @@ addButton.addEventListener('click', function() {
         addBook(newBook);
         index++;
         body.removeChild(form);
-        //addBook
     });
 });
-
-const table = document.getElementById('display');
 
 function Book(title, author, pages, read, index) {
     this.title = title;
@@ -89,6 +107,7 @@ function Book(title, author, pages, read, index) {
 
 function addBook(book) {
     myLibrary.push(book);
+    updateLocal();
     displayBooks();
 }
 
@@ -116,6 +135,7 @@ function displayBooks() {
         }
         readChange.addEventListener('click', function() {
             book.read = !book.read;
+            updateLocal();
             clearDisplay;
             displayBooks();
         })
@@ -147,5 +167,44 @@ function clearDisplay() {
 
 function removeBook(id) {
     myLibrary.splice(id, 1);
+    updateLocal();
+    displayBooks();
+}
+
+function storageAvailable(type) {
+    var storage;
+    try {
+        storage = window[type];
+        var x = '__storage_test__';
+        storage.setItem(x, x);
+        storage.removeItem(x);
+        return true;
+    }
+    catch(e) {
+        return e instanceof DOMException && (
+            // everything except Firefox
+            e.code === 22 ||
+            // Firefox
+            e.code === 1014 ||
+            // test name field too, because code might not be present
+            // everything except Firefox
+            e.name === 'QuotaExceededError' ||
+            // Firefox
+            e.name === 'NS_ERROR_DOM_QUOTA_REACHED') &&
+            // acknowledge QuotaExceededError only if there's something already stored
+            (storage && storage.length !== 0);
+    }
+}
+
+function updateLocal() {
+    if (storage) {
+        localStorage.clear();
+        localStorage.setItem('library', JSON.stringify(myLibrary));
+    }
+}
+
+function deleteLibrary() {
+    myLibrary = []
+    localStorage.clear();
     displayBooks();
 }

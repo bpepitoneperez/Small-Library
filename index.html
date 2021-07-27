@@ -5,16 +5,19 @@
     <script src="script.js" defer></script>
 </head>
 <body>
-    <h1>Library</h1>
-    <button id="add">Add Book</button>
+    <div id='header'>
+        <button id="add">Add Book</button>
+        <h1 id='logo'>Library</h1>
+        <button id="delete">Delete Library</button>
+    </div>
     <table id="display">
         <colgroup span="5"></colgroup>
-        <tr>
+        <tr id="table-header">
             <th>Title</th>
             <th>Author</th>
             <th>Pages</th>
             <th>Read</th>
-            <th>Delete</th>
+            <th></th>
         </tr>
     </table>
 </body>

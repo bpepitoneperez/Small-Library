@@ -2,6 +2,7 @@ let storage = true;
 let myLibrary = [];
 let hasArray;
 let formActive = false;
+let index;
 
 const table = document.getElementById('display');
 
@@ -16,6 +17,7 @@ if (storageAvailable('localStorage')) {
         if (myLibrary.length != 0) {
             displayBooks();
         }
+        index = myLibrary.length;
     }
 }
 else {
@@ -62,16 +64,20 @@ addButton.addEventListener('click', function() {
         pageInput.required = true;;
         form.appendChild(pageInput);
 
+        let readDiv = document.createElement('div');
+        readDiv.setAttribute('id', 'read-div');
         let readLabel = document.createElement('label');
         readLabel.htmlFor = 'read';
-        readLabel.textContent = 'Read?';
-        form.appendChild(readLabel);
+        readLabel.textContent = 'Read';
+        readLabel.setAttribute('id', 'read-label');
+        readDiv.appendChild(readLabel);
         let readInput = document.createElement('input');
         readInput.type = 'checkbox';
-        readInput.id = 'read';
+        readInput.setAttribute('id', 'read-input');
         readInput.name = 'read';
         readInput.value = 'Read';
-        form.appendChild(readInput);
+        readDiv.appendChild(readInput);
+        form.appendChild(readDiv);
 
         let buttonDiv = document.createElement('div');
         buttonDiv.setAttribute('id','button-div');
@@ -92,31 +98,47 @@ addButton.addEventListener('click', function() {
 
         body.appendChild(form);
 
+        titleInput.focus();
+
 
         form.addEventListener('submit', function(event) {
             event.preventDefault();
-            formActive = false;
             let isRead = false;
             let titleData = document.getElementById('title').value;
             let authorData = document.getElementById('author').value;
             let pageData = document.getElementById('pages').value;
-            let readData = document.getElementById('read');
+            let readData = document.getElementById('read-input');
             if (readData.checked) {
                 isRead = true;
             }
-            let newBook = new Book(titleData, authorData, pageData, isRead);
+            let newBook = new Book(titleData, authorData, pageData, isRead, index);
+            index++;
             addBook(newBook);
             body.removeChild(form);
+            formActive = false;
         });
     }
 });
 
-function Book(title, author, pages, read) {
+const deleteButton = document.getElementById('delete');
+deleteButton.addEventListener('click', deleteLibrary);
+
+document.addEventListener('keyup', function(event) {
+    if (!formActive) {
+        if (event.code == 'Space') {
+            addButton.click();
+        }
+    }
+});
+
+
+
+function Book(title, author, pages, read, id) {
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = read;
-    this.id = title+author+pages;
+    this.id = id;
 }
 
 function addBook(book) {
@@ -143,7 +165,7 @@ function displayBooks() {
 
         let readChange = document.createElement('input');
         readChange.setAttribute('type', 'checkbox');
-        readChange.setAttribute('class', 'readButton');
+        readChange.setAttribute('id', 'read-switch');
         if (book.read) {
             readChange.checked = true;
         }
@@ -158,6 +180,7 @@ function displayBooks() {
 
         let remove = document.createElement('button');
         remove.setAttribute('id', 'remove-button');
+        remove.textContent = "Remove";
         remove.addEventListener('click', function() {
             removeBook(book.id);
         })
@@ -181,6 +204,10 @@ function clearDisplay() {
 
 function removeBook(id) {
     myLibrary.splice(id, 1);
+    for (let i = id; i < myLibrary.length; i++) {
+        myLibrary[i].id = myLibrary[i].id - 1;
+    }
+    index--;
     updateLocal();
     displayBooks();
 }
@@ -220,5 +247,6 @@ function updateLocal() {
 function deleteLibrary() {
     myLibrary = []
     localStorage.clear();
+    index = 0;
     displayBooks();
 }

@@ -1,6 +1,7 @@
 let storage = true;
 let myLibrary = [];
 let hasArray;
+let formActive = false;
 
 const table = document.getElementById('display');
 
@@ -25,73 +26,89 @@ const body = document.body;
 
 const addButton = document.getElementById('add');
 addButton.addEventListener('click', function() {
-    let form = document.createElement('form');
-    let titleLabel = document.createElement('label');
-    titleLabel.htmlFor = 'title';
-    titleLabel.textContent = 'Title';
-    form.appendChild(titleLabel);
-    let titleInput = document.createElement('input');
-    titleInput.type = 'text';
-    titleInput.id = 'title';
-    titleInput.name = 'title';
-    titleInput.required = true;
-    form.appendChild(titleInput);
+    if (!formActive) {
+        formActive = true;
+        let form = document.createElement('form');
+        let titleLabel = document.createElement('label');
+        titleLabel.htmlFor = 'title';
+        titleLabel.textContent = 'Title';
+        form.appendChild(titleLabel);
+        let titleInput = document.createElement('input');
+        titleInput.type = 'text';
+        titleInput.id = 'title';
+        titleInput.name = 'title';
+        titleInput.required = true;
+        form.appendChild(titleInput);
 
-    let authorLabel = document.createElement('label');
-    authorLabel.htmlFor = 'author';
-    authorLabel.textContent = 'Author';
-    form.appendChild(authorLabel);
-    let authorInput = document.createElement('input');
-    authorInput.type = 'text';
-    authorInput.id = 'author';
-    authorInput.name = 'author';
-    authorInput.required = true;
-    form.appendChild(authorInput);
+        let authorLabel = document.createElement('label');
+        authorLabel.htmlFor = 'author';
+        authorLabel.textContent = 'Author';
+        form.appendChild(authorLabel);
+        let authorInput = document.createElement('input');
+        authorInput.type = 'text';
+        authorInput.id = 'author';
+        authorInput.name = 'author';
+        authorInput.required = true;
+        form.appendChild(authorInput);
 
-    let pageLabel = document.createElement('label');
-    pageLabel.htmlFor = 'pages';
-    pageLabel.textContent = 'Pages';
-    form.appendChild(pageLabel);
-    let pageInput = document.createElement('input');
-    pageInput.type = 'number';
-    pageInput.id = 'pages';
-    pageInput.name = 'pages';
-    pageInput.required = true;;
-    form.appendChild(pageInput);
+        let pageLabel = document.createElement('label');
+        pageLabel.htmlFor = 'pages';
+        pageLabel.textContent = 'Pages';
+        form.appendChild(pageLabel);
+        let pageInput = document.createElement('input');
+        pageInput.type = 'number';
+        pageInput.id = 'pages';
+        pageInput.name = 'pages';
+        pageInput.required = true;;
+        form.appendChild(pageInput);
 
-    let readLabel = document.createElement('label');
-    readLabel.htmlFor = 'read';
-    readLabel.textContent = 'Read?';
-    form.appendChild(readLabel);
-    let readInput = document.createElement('input');
-    readInput.type = 'checkbox';
-    readInput.id = 'read';
-    readInput.name = 'read';
-    readInput.value = 'Read';
-    form.appendChild(readInput);
+        let readLabel = document.createElement('label');
+        readLabel.htmlFor = 'read';
+        readLabel.textContent = 'Read?';
+        form.appendChild(readLabel);
+        let readInput = document.createElement('input');
+        readInput.type = 'checkbox';
+        readInput.id = 'read';
+        readInput.name = 'read';
+        readInput.value = 'Read';
+        form.appendChild(readInput);
 
-    let submit = document.createElement('input');
-    submit.type = 'submit';
-    submit.value = 'Submit';
-    form.appendChild(submit);
+        let buttonDiv = document.createElement('div');
+        buttonDiv.setAttribute('id','button-div');
+        let submit = document.createElement('input');
+        submit.type = 'submit';
+        submit.value = 'Submit';
+        buttonDiv.appendChild(submit);
+        let cancel = document.createElement('button');
+        cancel.textContent = "Cancel";
+        cancel.setAttribute('id', 'cancel-button');
+        cancel.addEventListener('click', function() {
+            formActive = false;
+            body.removeChild(form);
+        });
+        buttonDiv.appendChild(cancel);
 
-    body.appendChild(form);
+        form.appendChild(buttonDiv);
+
+        body.appendChild(form);
 
 
-    form.addEventListener('submit', function(event) {
-        event.preventDefault();
-        let isRead = false;
-        let titleData = document.getElementById('title').value;
-        let authorData = document.getElementById('author').value;
-        let pageData = document.getElementById('pages').value;
-        let readData = document.getElementById('read');
-        if (readData.checked) {
-            isRead = true;
-        }
-        let newBook = new Book(titleData, authorData, pageData, isRead);
-        addBook(newBook);
-        body.removeChild(form);
-    });
+        form.addEventListener('submit', function(event) {
+            event.preventDefault();
+            formActive = false;
+            let isRead = false;
+            let titleData = document.getElementById('title').value;
+            let authorData = document.getElementById('author').value;
+            let pageData = document.getElementById('pages').value;
+            let readData = document.getElementById('read');
+            if (readData.checked) {
+                isRead = true;
+            }
+            let newBook = new Book(titleData, authorData, pageData, isRead);
+            addBook(newBook);
+            body.removeChild(form);
+        });
+    }
 });
 
 function Book(title, author, pages, read) {
@@ -140,7 +157,7 @@ function displayBooks() {
         tr4.appendChild(readChange);
 
         let remove = document.createElement('button');
-        remove.setAttribute('class', 'removeButton');
+        remove.setAttribute('id', 'remove-button');
         remove.addEventListener('click', function() {
             removeBook(book.id);
         })

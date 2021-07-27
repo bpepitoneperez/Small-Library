@@ -23,8 +23,6 @@ else {
 
 const body = document.body;
 
-let index = 0;
-
 const addButton = document.getElementById('add');
 addButton.addEventListener('click', function() {
     let form = document.createElement('form');
@@ -90,19 +88,18 @@ addButton.addEventListener('click', function() {
         if (readData.checked) {
             isRead = true;
         }
-        let newBook = new Book(titleData, authorData, pageData, isRead, index);
+        let newBook = new Book(titleData, authorData, pageData, isRead);
         addBook(newBook);
-        index++;
         body.removeChild(form);
     });
 });
 
-function Book(title, author, pages, read, index) {
+function Book(title, author, pages, read) {
     this.title = title;
     this.author = author;
     this.pages = pages;
     this.read = read;
-    this.id = index;
+    this.id = title+author+pages;
 }
 
 function addBook(book) {

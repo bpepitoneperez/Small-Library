@@ -61,12 +61,15 @@ addButton.addEventListener('click', function() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-        
+        let isRead = false;
         let titleData = document.getElementById('title').value;
         let authorData = document.getElementById('author').value;
         let pageData = document.getElementById('pages').value;
-        let readData = document.getElementById('read').value;
-        let newBook = new Book(titleData, authorData, pageData, readData, index);
+        let readData = document.getElementById('read');
+        if (readData.checked) {
+            isRead = true;
+        }
+        let newBook = new Book(titleData, authorData, pageData, isRead, index);
         addBook(newBook);
         index++;
         body.removeChild(form);
@@ -95,18 +98,42 @@ function displayBooks() {
     myLibrary.forEach(book => {
         let row = document.createElement('tr');
         row.setAttribute('class', 'aBook');
+
         let tr1 = document.createElement('td');
         tr1.textContent = book.title;
+
         let tr2 = document.createElement('td');
         tr2.textContent = book.author;
+
         let tr3 = document.createElement('td');
         tr3.textContent = book.pages;
+
+        let readChange = document.createElement('input');
+        readChange.setAttribute('type', 'checkbox');
+        readChange.setAttribute('class', 'readButton');
+        if (book.read) {
+            readChange.checked = true;
+        }
+        readChange.addEventListener('click', function() {
+            book.read = !book.read;
+            clearDisplay;
+            displayBooks();
+        })
         let tr4 = document.createElement('td');
-        tr4.textContent = book.read;
+        tr4.appendChild(readChange);
+
+        let remove = document.createElement('button');
+        remove.setAttribute('class', 'removeButton');
+        remove.addEventListener('click', function() {
+            removeBook(book.id);
+        })
+        let tr5 = document.createElement('td');
+        tr5.appendChild(remove);
         row.appendChild(tr1);
         row.appendChild(tr2);
         row.appendChild(tr3);
         row.appendChild(tr4);
+        row.appendChild(tr5);
         table.appendChild(row);
     });
 }
@@ -122,4 +149,3 @@ function removeBook(id) {
     myLibrary.splice(id, 1);
     displayBooks();
 }
-

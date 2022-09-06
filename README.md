@@ -3,4 +3,4 @@ Library Project from The Odin Project
 
 Made with JavaScript, HTML, and CSS.
 
-https://bryanskyyy.github.io/Small-Library/
+https://bpepitoneperez.github.io/Small-Library/
